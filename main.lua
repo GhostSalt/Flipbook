@@ -5,37 +5,74 @@ SMODS.Atlas {
   py = 34
 }
 
---[[function Card:flipbook_set_anim_state(state)
+-- The below six functions worked in Phanta before I modified them, however I haven't tested these, so they may not work properly.
+function Card:flipbook_set_anim_state(state, dont_reset_t)
   self.config.center.flipbook_anim_current_state = state
-  self.config.center.flipbook_anim_t = 0
+  if not dont_reset_t then
+    self.config.center.flipbook_anim_t = 0
+  elseif self.config.center.flipbook_anim.length then
+    self.config.center.flipbook_anim_t = self.config.center.flipbook_anim_t % self.config.center.flipbook_anim.length
+  end
 end
 
-function Card:flipbook_set_anim_extra_state(state)
-  self.config.center.flipbook_anim_extra_current_state = state
-  self.config.center.flipbook_anim_extra_t = 0
+function Card:flipbook_set_anim_extra_state(state, layer, dont_reset_t)
+  if not self.config.center.flipbook_anim_extra_current_states then self.config.center.flipbook_anim_extra_current_states = {} end
+  if not layer then layer = "extra" end
+  self.config.center.flipbook_anim_extra_current_states[layer] = state
+  
+  if not self.config.center.flipbook_anim_extra_t then self.config.center.flipbook_anim_extra_t = {} end
+  if not dont_reset_t then
+    self.config.center.flipbook_anim_extra_t[layer] = 0
+  elseif self.config.center.flipbook_anim_extra[layer] then
+    self.config.center.flipbook_anim_extra_t[layer] = self.config.center.flipbook_anim_extra_t[layer] % self.config.center.flipbook_anim_extra[layer].length
+  end
 end
 
-function SMODS.Center:flipbook_set_anim_state(state)
-  self.config.center.flipbook_anim_current_state = state
-  self.config.center.flipbook_anim_t = 0
+function SMODS.Center:flipbook_set_anim_state(state, dont_reset_t)
+  self.flipbook_anim_current_state = state
+  if not dont_reset_t then
+    self.flipbook_anim_t = 0
+  elseif self.flipbook_anim.length then
+    self.flipbook_anim_t = self.flipbook_anim_t % self.flipbook_anim.length
+  end
 end
 
-function SMODS.Center:flipbook_set_anim_extra_state(state)
-  self.flipbook_anim_extra_current_state = state
-  self.flipbook_anim_extra_t = 0
+function SMODS.Center:flipbook_set_anim_extra_state(state, layer, dont_reset_t)
+  if not self.flipbook_anim_extra_current_states then self.flipbook_anim_extra_current_states = {} end
+  if not layer then layer = "extra" end
+  self.flipbook_anim_extra_current_states[layer] = state
+  
+  if not self.flipbook_anim_extra_t then self.flipbook_anim_extra_t = {} end
+  if not dont_reset_t then
+    self.flipbook_anim_extra_t[layer] = 0
+  elseif self.flipbook_anim_extra[layer] then
+    self.flipbook_anim_extra_t[layer] = self.flipbook_anim_extra_t[layer] % self.flipbook_anim_extra[layer].length
+  end
 end
 
-function flipbook_set_anim_state(center, state)
-  center.config.center.flipbook_anim_current_state = state
-  center.config.center.flipbook_anim_t = 0
+function flipbook_set_anim_state(center, state, dont_reset_t)
+  center.flipbook_anim_current_state = state
+  if not dont_reset_t then
+    center.flipbook_anim_t = 0
+  elseif center.flipbook_anim.length then
+    center.flipbook_anim_t = center.flipbook_anim_t % center.flipbook_anim.length
+  end
 end
 
-function flipbook_set_anim_extra_state(center, state)
-  center.flipbook_anim_extra_current_state = state
-  center.flipbook_anim_extra_t = 0
-end]] --
+function flipbook_set_anim_extra_state(center, state, layer, dont_reset_t)
+  if not center.flipbook_anim_extra_current_states then center.flipbook_anim_extra_current_states = {} end
+  if not layer then layer = "extra" end
+  center.flipbook_anim_extra_current_states[layer] = state
+  
+  if not center.flipbook_anim_extra_t then center.flipbook_anim_extra_t = {} end
+  if not dont_reset_t then
+    center.flipbook_anim_extra_t[layer] = 0
+  elseif center.flipbook_anim_extra[layer] then
+    center.flipbook_anim_extra_t[layer] = center.flipbook_anim_extra_t[layer] % center.flipbook_anim_extra[layer].length
+  end
+end
 
-get_pos_from_flipbook_table = function(pos)
+get_pos_from_flipbook_table = function(pos) -- Not really intended for use outside this script.
   return pos and (pos.pos or (pos.x and pos.y and pos)) or { x = 0, y = 0 }
 end
 
@@ -273,6 +310,7 @@ function format_flipbook_anim(anim)
   new_anim.t = anim.t
   return new_anim
 end
+
 --[[
 SMODS.Joker:take_ownership("j_joker", {
   flipbook_anim = {
@@ -310,4 +348,4 @@ SMODS.Joker:take_ownership("j_greedy_joker", {
   },
   flipbook_anim_extra_current_states = { blah = "extra1", foo = "gwah" }
 }, true)
-]]--
+]] --
