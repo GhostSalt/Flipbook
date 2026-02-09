@@ -116,12 +116,12 @@ SMODS.DrawStep {
           end
 
           local center = self.config.center
-          if center.draw_extra and type(center.draw_extra) == "function" then
-            center:draw_extra(self, layer)
+          if center.flipbook_draw_extra and type(center.flipbook_draw_extra) == "function" then
+            center:flipbook_draw_extra(self, layer)
           end
-          if center.draw_extra and type(center.draw_extra) == "table"
-              and center.draw_extra[k] and type(center.draw_extra[k]) == "function" then
-            (center.draw_extra[k])(self, layer)
+          if center.flipbook_draw_extra and type(center.flipbook_draw_extra) == "table"
+              and center.flipbook_draw_extra[k] and type(center.flipbook_draw_extra[k]) == "function" then
+            (center.flipbook_draw_extra[k])(self, layer)
           end
 
           local edition = self.delay_edition or self.edition
@@ -223,7 +223,7 @@ function handle_flipbook_anim_extra(v, dt)
 
       local temp = {}
       for k, layer in pairs(v.flipbook_anim_extra_states) do
-        temp[k] = v.flipbook_anim_extra_states[k][v.flipbook_anim_extra_current_states[k]].anim
+        temp[k] = layer[v.flipbook_anim_extra_current_states[k]].anim
       end
       v.flipbook_anim_extra = temp
     else
