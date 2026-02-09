@@ -1,0 +1,14 @@
+{
+    "id": "GSFlipbook",
+    "name": "Flipbook",
+    "author": ["GhostSalt"],
+    "description": "An animation API for mods that support it! Check the documentation on the repository for more information.",
+    "prefix": "flipbook",
+    "main_file": "main.lua",
+    "badge_colour": "b59269",
+    "dependencies": [
+        "Steamodded (>=1.0.0~BETA-0711a)"
+    ],
+    "version": "1.0.0~BETA",
+    "priority": -999
+}
