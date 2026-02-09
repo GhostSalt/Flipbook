@@ -171,7 +171,7 @@ function handle_flipbook_anim(v, dt)
     else
       local loop = v.flipbook_anim_states and v.flipbook_anim_current_state and
           v.flipbook_anim_states[v.flipbook_anim_current_state] and v.flipbook_anim_states[v.flipbook_anim_current_state].loop
-      if not loop then loop = true end
+      if loop == nil then loop = true end -- IMPORTANT: DO NOT SIMPLIFY TO not loop, AS FALSE IS ALLOWED.
       if not v.flipbook_anim_t then v.flipbook_anim_t = 0 end
       if not v.flipbook_anim.length then
         v.flipbook_anim.length = 0
