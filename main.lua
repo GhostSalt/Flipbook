@@ -19,7 +19,7 @@ function Card:flipbook_set_anim_extra_state(state, layer, dont_reset_t)
   if not self.config.center.flipbook_anim_extra_current_states then self.config.center.flipbook_anim_extra_current_states = {} end
   if not layer then layer = "extra" end
   self.config.center.flipbook_anim_extra_current_states[layer] = state
-  
+
   if not self.config.center.flipbook_anim_extra_t then self.config.center.flipbook_anim_extra_t = {} end
   if not dont_reset_t then
     self.config.center.flipbook_anim_extra_t[layer] = 0
@@ -41,7 +41,7 @@ function SMODS.Center:flipbook_set_anim_extra_state(state, layer, dont_reset_t)
   if not self.flipbook_anim_extra_current_states then self.flipbook_anim_extra_current_states = {} end
   if not layer then layer = "extra" end
   self.flipbook_anim_extra_current_states[layer] = state
-  
+
   if not self.flipbook_anim_extra_t then self.flipbook_anim_extra_t = {} end
   if not dont_reset_t then
     self.flipbook_anim_extra_t[layer] = 0
@@ -63,7 +63,7 @@ function flipbook_set_anim_extra_state(center, state, layer, dont_reset_t)
   if not center.flipbook_anim_extra_current_states then center.flipbook_anim_extra_current_states = {} end
   if not layer then layer = "extra" end
   center.flipbook_anim_extra_current_states[layer] = state
-  
+
   if not center.flipbook_anim_extra_t then center.flipbook_anim_extra_t = {} end
   if not dont_reset_t then
     center.flipbook_anim_extra_t[layer] = 0
@@ -85,7 +85,7 @@ SMODS.DrawStep {
       local fpe = self.config.center.flipbook_pos_extra
       if fpe.x and fpe.y then -- flipbook_pos_extra = { x = ?, y = ?, atlas = "ExampleAtlas" }
         local atlas = G.ASSET_ATLAS[fpe.atlas or self.config.center.atlas]
-        self.flipbook_extra[k] = Sprite(0, 0, atlas.px, atlas.py, atlas, { fpe.x, fpe.y })
+        self.flipbook_extra.extra = Sprite(0, 0, atlas.px, atlas.py, atlas, { x = fpe.x, y = fpe.y })
       else -- flipbook_pos_extra = { example = { x = ?, y = ? }, example2 = { x = ?, y = ?, atlas = "ExampleAtlas" } }
         for k, v in pairs(fpe) do
           local atlas = G.ASSET_ATLAS[v and v.atlas or self.config.center.atlas]
@@ -97,7 +97,7 @@ SMODS.DrawStep {
       if self.config.center.discovered or (self.params and self.params.bypass_discovery_center) then
         local fpe = self.config.center.flipbook_pos_extra
         if fpe.x and fpe.y then
-          fpe = { normal = self.config.center.flipbook_pos_extra }
+          fpe = { extra = self.config.center.flipbook_pos_extra }
         end
         for k, v in pairs(fpe) do
           self.flipbook_extra[k]:set_sprite_pos(get_pos_from_flipbook_table(v))
@@ -312,14 +312,11 @@ function format_flipbook_anim(anim)
 end
 
 --[[
+
 SMODS.Joker:take_ownership("j_joker", {
-  flipbook_anim = {
-    { x = 0,                            y = 0,                            t = 1 },
-    { x = 1,                            y = 0,                            t = 0.5 },
-    { xrange = { first = 2, last = 4 }, y = 0,                            t = 0.1 },
-    { x = 0,                            y = 0,                            t = 1 },
-    { x = 0,                            yrange = { first = 2, last = 4 }, t = 0.1 },
-  }
+  pos = { x = 8, y = 1 },
+  flipbook_pos_extra = { first = { x = 0, y = 3, atlas = "phanta_Phanta" }, second = { x = 1, y = 3, atlas = "phanta_Phanta" } },
+  flipbook_anim_extra = { first = { { x = 0, y = 3, t = 1 }, { x = 2, y = 3, t = 0.5 } }, second = { { xrange = { first = 1, last = 5 }, y = 3, t = 0.1 } } }
 }, true)
 
 SMODS.Joker:take_ownership("j_chaos", {
