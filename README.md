@@ -191,7 +191,7 @@ flipbok_anim_states = {
 flipbook_anim_current_state = "normal",
 flipbook_anim_extra_states = {
   macy = {
-    eepy = { anim = { { x = 5, y = 0, t = 1 }, loop = false } },
+    eepy = { anim = { { x = 5, y = 0, t = 1 } }, loop = false },
     awake = { anim = { { xrange = { first = 6, last = 8 }, y = 0, t = 10 } }, loop = false, continuation = "eepy" }
   },
   david = {
