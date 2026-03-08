@@ -135,7 +135,7 @@ Suppose we have a Joker called Gary. Gary acts normally most of the time, while 
 
 How would we implement Gary? Below is an example, showing how animation states can be made with Flipbook.
 ```
-flipbok_anim_states = {
+flipbook_anim_states = {
   normal = { anim = { { x = 0, y = 0, t = 1 }, { x = 1, y = 0, t = 1 } } },
   angry = { anim = { { x = 2, y = 0, t = 0.5 }, { x = 3, y = 0, t = 10 } }, loop = false, continuation = "normal" },
   dead = { anim = { { x = 4, y = 0, t = 1 } }, loop = false }
