@@ -124,7 +124,7 @@ local update_ref = Game.update
 function Game:update(dt)
   for k, v in pairs(G.MOVEABLES or {}) do
     local ccc = v and v.config and v.config.center
-    if ccc and (ccc.flipbook_anim or ccc.flipbook_anim_extra or ccc.flipbook_anim_states or ccc.flipbook_anim_extra_states) then
+    if ccc and (ccc.flipbook_anim or ccc.flipbook_anim_extra or ccc.flipbook_anim_states or ccc.flipbook_anim_extra_states) and (ccc.discovered or v.bypass_discovery_center) then
       handle_flipbook_anim(v, dt)
       handle_flipbook_anim_extra(v, dt)
     end
