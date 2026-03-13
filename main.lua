@@ -66,7 +66,17 @@ SMODS.DrawStep {
           fpe = { extra = self.flipbook_pos_extra }
         end
 
-        for k, v in pairs(fpe) do
+        local order = self.config.center.flipbook_pos_extra_order
+        if not order then
+          order = {}
+          for k, v in pairs(fpe) do
+            order[#order + 1] = k
+          end
+        end
+        for _, vv in ipairs(order) do
+          local k = vv
+          local v = fpe[vv]
+
           self.flipbook_extra[k]:set_sprite_pos(v)
           self.flipbook_extra[k].role.draw_major = self
 
@@ -134,7 +144,7 @@ function Game:update(dt)
 end
 
 function format_flipbook_anim(anim)
-  if not anim then return nil end
+  if not anim then return end
   local new_anim = {}
   for _, frame in ipairs(anim) do
     if frame and (frame.x or (frame.xrange and frame.xrange.first and frame.xrange.last)) and (frame.y or (frame.yrange and frame.yrange.first and frame.yrange.last)) then
@@ -144,13 +154,30 @@ function format_flipbook_anim(anim)
         local firstx = frame.x or frame.xrange.first
         local lastx = frame.x or frame.xrange.last
         for x = firstx, lastx, firstx <= lastx and 1 or -1 do
-          new_anim[#new_anim + 1] = { x = x, y = y, t = frame.t or 0, atlas = frame.atlas }
+          new_anim[#new_anim + 1] = { x = x, y = y, t = frame.t or 0, trandomrange = frame.trandomrange, trandomelement = frame.trandomelement, atlas = frame.atlas }
         end
       end
     end
   end
-  new_anim.t = anim.t
+  new_anim = flipbook_generate_randomness(new_anim)
   return new_anim
+end
+
+function flipbook_generate_randomness(anim)
+  if not anim then return end
+
+  local length = 0
+  for _, frame in ipairs(anim) do
+    if frame.trandomrange then
+      frame.t = (frame.trandomrange.first or 0) + (math.random() * ((frame.trandomrange.last or 0) - (frame.trandomrange.first or 0)))
+    elseif frame.trandomelement then
+      frame.t = frame.trandomelement[math.random(1, #frame.trandomelement)]
+    end
+    length = length + (frame.t or 0)
+  end
+
+  anim.length = length
+  return anim
 end
 
 function handle_flipbook_anim(v, dt)
@@ -174,12 +201,6 @@ function handle_flipbook_anim(v, dt)
           v.config.center.flipbook_anim_states[v.flipbook_anim_current_state] and v.config.center.flipbook_anim_states[v.flipbook_anim_current_state].loop
       if loop == nil then loop = true end -- IMPORTANT: DO NOT SIMPLIFY TO not loop, AS FALSE IS ALLOWED.
       if not v.flipbook_anim_t then v.flipbook_anim_t = 0 end
-      if not v.flipbook_anim.length then
-        v.flipbook_anim.length = 0
-        for _, frame in ipairs(v.flipbook_anim) do
-          v.flipbook_anim.length = v.flipbook_anim.length + (frame.t or 0)
-        end
-      end
       v.flipbook_anim_t = v.flipbook_anim_t + dt
       if not loop and v.flipbook_anim_t >= v.flipbook_anim.length then
         local continuation = v.config.center.flipbook_anim_states[v.flipbook_anim_current_state].continuation
@@ -192,6 +213,7 @@ function handle_flipbook_anim(v, dt)
           v.flipbook_anim_t = v.flipbook_anim.length
         end
       elseif loop then
+        if v.flipbook_anim_t >= v.flipbook_anim.length then v.flipbook_anim = flipbook_generate_randomness(v.flipbook_anim) end
         v.flipbook_anim_t = v.flipbook_anim_t % v.flipbook_anim.length
       end
       local ix = 0
@@ -277,13 +299,6 @@ function handle_flipbook_anim_extra(v, dt)
         end
         v.flipbook_anim_extra_t[k] = v.flipbook_anim_extra_t[k] + dt
 
-        if not layer.length then
-          layer.length = 0
-          for _, frame in ipairs(layer) do
-            layer.length = layer.length + (frame.t or 0)
-          end
-        end
-
         if not loop and v.flipbook_anim_extra_t[k] >= layer.length then
           local continuation = v.config.center.flipbook_anim_extra_states[k][v.flipbook_anim_extra_current_states[k]].continuation
           if continuation then
@@ -294,6 +309,7 @@ function handle_flipbook_anim_extra(v, dt)
             v.flipbook_anim_extra_t[k] = layer.length
           end
         elseif loop then
+          if v.flipbook_anim_extra_t[k] >= layer.length then v.flipbook_anim_extra[k] = flipbook_generate_randomness(v.flipbook_anim_extra[k]) end
           v.flipbook_anim_extra_t[k] = v.flipbook_anim_extra_t[k] % layer.length
         end
 
